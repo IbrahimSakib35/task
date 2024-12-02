@@ -1,18 +1,30 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { login, clearError } from '../features/authSlice'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const dispatch = useDispatch()
+  const { isAuthenticated, error, loading } = useSelector((state) => state.auth)
   const router = useRouter()
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard')
+    }
+    return () => {
+      dispatch(clearError());
+    }
+  }, [isAuthenticated, router, dispatch])
+
+  const handleSubmit = (e) => {
     e.preventDefault()
-    // TODO: Implement actual login logic
-    console.log('Login attempt with:', email, password)
-    router.push('/dashboard')
+    dispatch(login({ email, password }))
   }
 
   return (
@@ -50,10 +62,15 @@ export default function Login() {
             type="submit"
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
-            Sign In
+            Login
           </button>
         </div>
       </form>
+      {error && <p className="text-red-500 mt-4">{error}</p>}
+      <p className="mt-4">
+        Don't have an account? <Link href="/register" className="text-blue-500 hover:text-blue-700">Register</Link>
+      </p>
     </div>
   )
 }
+

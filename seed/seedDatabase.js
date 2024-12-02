@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const User = require('./models/User');
+const User = require('./User');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -16,6 +16,7 @@ const seedData = async () => {
     // Clear existing data
     await User.deleteMany({});
 
+    // Create users to test("npm run seed")
     // Create admins
     const admin1 = await User.create({
       fullName: 'Admin One',
@@ -53,7 +54,7 @@ const seedData = async () => {
       role: 'trainer'
     });
 
-    // Create test trainees
+    // Create trainees
     const trainee1 = await User.create({
       fullName: 'Trainee One',
       email: 'trainee1@example.com',
@@ -77,3 +78,4 @@ const seedData = async () => {
 };
 
 seedData();
+
