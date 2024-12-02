@@ -128,3 +128,13 @@ The Gym Class Scheduling and Membership Management System is a web-based platfor
     Email: 'admin1@example.com'
     Password: 'password123'
     ```
+- **Trainer**:
+    ```json
+    Email: 'trainer1@example.com'
+    Password: 'password123'
+    ```
+- **Trainee**:
+    ```json
+    Email: 'trainee1@example.com'
+    Password: 'password123'
+    ```    
