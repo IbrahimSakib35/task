@@ -139,3 +139,30 @@ The Gym Class Scheduling and Membership Management System is a web-based platfor
     Password: 'password123'
     ```    
 ## Instructions to Run Locally
+- **Clone the Repository**:
+    ```json
+    git clone https://github.com/IbrahimSakib35/task.git
+    cd task
+    ```
+- **Install Dependencies**:
+    ```json
+    npm install --legacy-peer-deps
+    npm install @reduxjs/toolkit --legacy-peer-deps
+    npm install axios --legacy-peer-deps
+    npm install react-redux --legacy-peer-deps
+    npm install express mongoose dotenv jsonwebtoken bcryptjs
+    npm install animate.css --legacy-peer-deps
+    ```
+- **Create a .env file in the root directory and add the following variables:**:
+    ```json
+    MONGODB_URI=mongodb+srv://task:task@tasks.dsn8t.mongodb.net/tasks
+    JWT_SECRET=abcde12345
+    ```  
+- **Start the server and access the Application at http://localhost:3000**:
+    ```json
+    npm run dev
+    ```
+## Live Hosting Link
+    ```json
+    https://smtwebdeveloperjobtask.vercel.app
+    ```
