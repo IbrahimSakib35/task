@@ -109,6 +109,7 @@ The Gym Class Scheduling and Membership Management System is a web-based platfor
   "role": "String", // enum: ['admin', 'trainer', 'trainee']
   "createdAt": "Date"
 }
+```
 ### Class Model
 ```json
 {
@@ -120,3 +121,4 @@ The Gym Class Scheduling and Membership Management System is a web-based platfor
   "endTime": "String",
   "trainees": ["ObjectId"] // references User
 }
+```
