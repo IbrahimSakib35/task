@@ -163,6 +163,6 @@ The Gym Class Scheduling and Membership Management System is a web-based platfor
     npm run dev
     ```
 ## Live Hosting Link
-```json
+
 https://smtwebdeveloperjobtask.vercel.app
-```
+
