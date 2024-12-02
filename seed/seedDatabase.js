@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('./User');
+const Class = require('./Class');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -15,6 +16,7 @@ const seedData = async () => {
   try {
     // Clear existing data
     await User.deleteMany({});
+    await Class.deleteMany({});
 
     // Create users to test("npm run seed")
     // Create admins
@@ -67,6 +69,24 @@ const seedData = async () => {
       email: 'trainee2@example.com',
       password: 'password123',
       role: 'trainee'
+    });
+
+    const class1 = await Class.create({
+      name: 'Yoga',
+      trainer: trainer1._id,
+      date: new Date('2024-12-10'),
+      startTime: '10:00 AM',
+      endTime: '12:00 PM',
+      trainees: trainee1._id
+    });
+
+    const class2 = await Class.create({
+      name: 'Cardio',
+      trainer: trainer2._id,
+      date: new Date('2024-12-11'),
+      startTime: '1:00 PM',
+      endTime: '3:00 PM',
+      trainees: trainee2._id
     });
 
     console.log('Database seeded successfully');

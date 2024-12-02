@@ -1,91 +1,78 @@
-'use client'
+import React, { useEffect, useState } from 'react';
 
-import { useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { createClass } from '../app/features/classSlice'
+const AdminDashboard = () => {
+  const [trainers, setTrainers] = useState([]);
+  const [trainees, setTrainees] = useState([]);
+  const [classes, setClasses] = useState([]);
 
-export default function AdminDashboard() {
-  const dispatch = useDispatch()
-  const { classes, loading } = useSelector((state) => state.class)
-  const [newClass, setNewClass] = useState({ name: '', trainer: '', date: '', startTime: '', endTime: '' })
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
 
-  const handleCreateClass = (e) => {
-    e.preventDefault()
-    dispatch(createClass(newClass))
-    setNewClass({ name: '', trainer: '', date: '', startTime: '', endTime: '' })
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const usersResponse = await fetch('/api/users');
+        const users = await usersResponse.json();
+        const classesResponse = await fetch('/api/classes');
+        const classes = await classesResponse.json();
+
+        setTrainers(users.filter(user => user.role === 'trainer'));
+        setTrainees(users.filter(user => user.role === 'trainee'));
+        setClasses(classes);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
-      
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Create New Class</h2>
-        <form onSubmit={handleCreateClass} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Class Name"
-            value={newClass.name}
-            onChange={(e) => setNewClass({ ...newClass, name: e.target.value })}
-            className="w-full p-2 border rounded"
-            required
-          />
-          <input
-            type="text"
-            placeholder="Trainer ID"
-            value={newClass.trainer}
-            onChange={(e) => setNewClass({ ...newClass, trainer: e.target.value })}
-            className="w-full p-2 border rounded"
-            required
-          />
-          <input
-            type="date"
-            value={newClass.date}
-            onChange={(e) => setNewClass({ ...newClass, date: e.target.value })}
-            className="w-full p-2 border rounded"
-            required
-          />
-          <input
-            type="time"
-            value={newClass.startTime}
-            onChange={(e) => setNewClass({ ...newClass, startTime: e.target.value })}
-            className="w-full p-2 border rounded"
-            required
-          />
-          <input
-            type="time"
-            value={newClass.endTime}
-            onChange={(e) => setNewClass({ ...newClass, endTime: e.target.value })}
-            className="w-full p-2 border rounded"
-            required
-          />
-          <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Create Class
-          </button>
-        </form>
-      </div>
-      
-      <div>
-        <h2 className="text-xl font-semibold mb-2">Existing Classes</h2>
-        {loading ? (
-          <p>Loading classes...</p>
-        ) : (
-          <ul>
-            {classes.map((cls) => (
-              <li key={cls._id} className="mb-2">
-                {cls.name} - {new Date(cls.date).toLocaleDateString()} {cls.startTime}-{cls.endTime}
-              </li>
+    <div className="min-h-screen bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-700 text-white p-6">
+      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 animate__animated animate__fadeIn">
+        <h1 className="text-4xl font-semibold text-center text-yellow-400 mb-6">Welcome, Admin!</h1>
+        <button onClick={handleLogout} className="bg-red-600 text-white p-2 rounded hover:bg-red-700 transition ease-in-out duration-300">
+          Logout
+        </button>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold text-blue-600 mb-4">Trainers</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {trainers.map((trainer) => (
+              <div key={trainer._id} className="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all ease-in-out duration-300">
+                <h3 className="text-xl font-semibold text-gray-800">{trainer.fullName}</h3>
+              </div>
             ))}
-          </ul>
-        )}
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold text-blue-600 mb-4">Trainees</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {trainees.map((trainee) => (
+              <div key={trainee._id} className="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all ease-in-out duration-300">
+                <h3 className="text-xl font-semibold text-gray-800">{trainee.fullName}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold text-blue-600 mb-4">Classes</h2>
+          <div className="space-y-4">
+            {classes.map((classItem) => (
+              <div key={classItem._id} className="bg-gray-200 p-6 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all ease-in-out duration-300">
+                <h3 className="font-semibold text-gray-800">{classItem.name}</h3>
+                <p className="text-gray-700">{new Date(classItem.date).toLocaleDateString()}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-// const Admin= () =>{
-//     return(
-//         <div>Hello admin</div>
-//     )
-// }
-// export default Admin;
+export default AdminDashboard;

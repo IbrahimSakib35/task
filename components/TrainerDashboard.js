@@ -1,40 +1,65 @@
-'use client'
+import React, { useEffect, useState } from 'react';
 
-import { useSelector } from 'react-redux'
+const TrainerDashboard = () => {
+  const [classes, setClasses] = useState([]);
+  const [trainees, setTrainees] = useState([]);
 
-export default function TrainerDashboard() {
-  const { user } = useSelector((state) => state.auth)
-  const { classes, loading } = useSelector((state) => state.class)
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
 
-  const trainerClasses = classes.filter(cls => cls.trainer === user._id)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const classesResponse = await fetch('/api/classes');
+        const classes = await classesResponse.json();
+        setClasses(classes);
+
+        const usersResponse = await fetch('/api/users');
+        const users = await usersResponse.json();
+        setTrainees(users.filter(user => user.role === 'trainee'));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Trainer Dashboard</h1>
-      
-      <div>
-        <h2 className="text-xl font-semibold mb-2">Your Classes</h2>
-        {loading ? (
-          <p>Loading classes...</p>
-        ) : (
-          <ul>
-            {trainerClasses.map((cls) => (
-              <li key={cls._id} className="mb-2">
-                {cls.name} - {new Date(cls.date).toLocaleDateString()} {cls.startTime}-{cls.endTime}
-                <br />
-                Trainees: {cls.trainees.length}
-              </li>
+    <div className="min-h-screen bg-gradient-to-r from-teal-500 via-green-600 to-blue-700 text-white p-6">
+      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 animate__animated animate__fadeIn">
+        <h1 className="text-4xl font-semibold text-center text-yellow-400 mb-6">Welcome, Trainer!</h1>
+        <button onClick={handleLogout} className="bg-red-600 text-white p-2 rounded hover:bg-red-700 transition ease-in-out duration-300">
+          Logout
+        </button>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold text-blue-600 mb-4">Assigned Classes</h2>
+          <div className="space-y-4">
+            {classes.map((classItem) => (
+              <div key={classItem._id} className="bg-gray-200 p-6 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all ease-in-out duration-300">
+                <h3 className="font-semibold text-gray-800">{classItem.name}</h3>
+                <p className="text-gray-700">{new Date(classItem.date).toLocaleDateString()}</p>
+              </div>
             ))}
-          </ul>
-        )}
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold text-blue-600 mb-4">Trainees</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {trainees.map((trainee) => (
+              <div key={trainee._id} className="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all ease-in-out duration-300">
+                <h3 className="text-xl font-semibold text-gray-800">{trainee.fullName}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-// const trainer= () =>{
-//     return(
-//         <div>Hello trainer</div>
-//     )
-// }
-// export default trainer;
+export default TrainerDashboard;

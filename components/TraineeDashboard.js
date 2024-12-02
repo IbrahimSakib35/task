@@ -1,52 +1,49 @@
-'use client'
+import React, { useEffect, useState } from 'react';
 
-import { useSelector, useDispatch } from 'react-redux'
-import { bookClass } from '../app/features/classSlice'
+const TraineeDashboard = () => {
+  const [classes, setClasses] = useState([]);
 
-export default function TraineeDashboard() {
-  const dispatch = useDispatch()
-  const { user } = useSelector((state) => state.auth)
-  const { classes, loading } = useSelector((state) => state.class)
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
 
-  const handleBookClass = (classId) => {
-    dispatch(bookClass(classId))
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const classesResponse = await fetch('/api/classes');
+        const classes = await classesResponse.json();
+        setClasses(classes);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Trainee Dashboard</h1>
-      
-      <div>
-        <h2 className="text-xl font-semibold mb-2">Available Classes</h2>
-        {loading ? (
-          <p>Loading classes...</p>
-        ) : (
-          <ul>
-            {classes.map((cls) => (
-              <li key={cls._id} className="mb-2">
-                {cls.name} - {new Date(cls.date).toLocaleDateString()} {cls.startTime}-{cls.endTime}
-                <br />
-                Spots: {cls.trainees.length}/10
-                {cls.trainees.length < 10 && !cls.trainees.includes(user._id) && (
-                  <button
-                    onClick={() => handleBookClass(cls._id)}
-                    className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-sm"
-                  >
-                    Book
-                  </button>
-                )}
-              </li>
+    <div className="min-h-screen bg-gradient-to-r from-pink-500 via-purple-600 to-blue-700 text-white p-6">
+      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 animate__animated animate__fadeIn">
+        <h1 className="text-4xl font-semibold text-center text-yellow-400 mb-6">Welcome, Trainee!</h1>
+        <button onClick={handleLogout} className="bg-red-600 text-white p-2 rounded hover:bg-red-700 transition ease-in-out duration-300">
+          Logout
+        </button>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold text-blue-600 mb-4">Available Classes</h2>
+          <div className="space-y-4">
+            {classes.map((classItem) => (
+              <div key={classItem._id} className="bg-gray-200 p-6 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all ease-in-out duration-300">
+                <h3 className="font-semibold text-gray-800">{classItem.name}</h3>
+                <p className="text-gray-700">{new Date(classItem.date).toLocaleDateString()}</p>
+              </div>
             ))}
-          </ul>
-        )}
+          </div>
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-// const trainee= () =>{
-//     return(
-//         <div>Hello trainee</div>
-//     )
-// }
-// export default trainee;
+export default TraineeDashboard;
