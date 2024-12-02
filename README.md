@@ -115,10 +115,10 @@ The Gym Class Scheduling and Membership Management System is a web-based platfor
 {
   "id": "ObjectId",
   "name": "String",
-  "trainer": "ObjectId", // references User
+  "trainer": "ObjectId", [references User]
   "date": "Date",
   "startTime": "String",
   "endTime": "String",
-  "trainees": ["ObjectId"] // references User
+  "trainees": ["ObjectId"] [references User]
 }
 ```
